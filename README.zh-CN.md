@@ -4,7 +4,7 @@
 
 [![Awesome Humane Tech](https://raw.githubusercontent.com/humanetech-community/awesome-humane-tech/main/humane-tech-badge.svg?sanitize=true)](https://github.com/humanetech-community/awesome-humane-tech)
 
-**Re: LeechBlock NG** 是 **LeechBlock NG (Next Generation)** 的现代化社区维护版本（Fork），旨在帮助用户减少干扰、提升专注力，并持续引入新的功能与改进。
+**Re: LeechBlock NG** 是 **LeechBlock NG (Next Generation) Chrome** 的一个分支，旨在帮助用户减少干扰、提升专注力，并持续引入新的功能与改进。
 
 在继承原项目稳定可靠设计的基础上，Re: LeechBlock NG 将逐步加入：
 
