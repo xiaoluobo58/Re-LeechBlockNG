@@ -1,13 +1,23 @@
-# LeechBlock NG for Chrome
+# Re: LeechBlock NG
+
+[English](README.md) | [简体中文](README.zh-CN.md)
 
 [![Awesome Humane Tech](https://raw.githubusercontent.com/humanetech-community/awesome-humane-tech/main/humane-tech-badge.svg?sanitize=true)](https://github.com/humanetech-community/awesome-humane-tech)
 
-LeechBlock NG (Next Generation) is a simple productivity tool designed to block those time-wasting sites that can suck the life out of your working day. All you need to do is specify which sites to block and when to block them.
+**Re: LeechBlock NG** is a modern community-maintained fork of **LeechBlock NG (Next Generation)**, a productivity extension that helps you stay focused by blocking distracting websites.
 
-**Author:** James Anderson
+Building on the solid foundation of the original project, Re: LeechBlock NG introduces modern improvements such as AI-powered features, internationalization (i18n), usability enhancements, and ongoing maintenance while remaining lightweight and privacy-friendly.
 
-**Contributors:** Dario Kolac (graphics) & Robert Gützkow (graphics)
+Simply choose which websites to block and when to block them—Re: LeechBlock NG helps you regain control of your browsing and focus on what matters.
 
-Note that the latest version of [jQuery UI](https://jqueryui.com/) should be installed in the subfolder `jquery-ui`.
+## Credits
 
-**Policy on PRs:** I'm happy to consider PRs, but unless they're relatively simple (e.g., bug fixes or UI tweaks) it will take me some time to review and test them, and even then I may decide not to approve them. Please understand that LeechBlock is just a hobby for me, and I have very little time even to develop my own code, never mind other people's code! If you want to fork LeechBlock and release your own version, you're more than welcome.
+**Original Author:** James Anderson
+
+**Original Contributors:** Dario Kolac (graphics) & Robert Gützkow (graphics)
+
+Re: LeechBlock NG is an independent community-maintained fork that continues the development of the original project with new features and improvements.
+
+## Development
+
+The latest version of jQuery UI should be installed in the `jquery-ui` subfolder before building the project.
