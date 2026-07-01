@@ -5,7 +5,7 @@
 
 ## 1. 项目简介
 
-- **本项目**：[LeechBlock NG](https://www.proginosko.com/leechblock/) 的中文 "Re:" fork。LeechBlock 是一款拦截"浪费时间"网站的效率扩展。
+- **本项目**：[LeechBlock NG](https://www.proginosko.com/leechblock/) 的中文 "Re:" fork（**Re: LeechBlock NG**）。LeechBlock 是一款拦截"浪费时间"网站的效率扩展。
 - **平台**：Chrome **Manifest V3** 扩展（`manifest.json` 中 `manifest_version: 3`）。各脚本顶部用 `const browser = chrome;` 把 `browser` 别名到 `chrome`，因此代码风格类 WebExtension，但实际依赖 Chrome API（`chrome.i18n` 同步可用、`action`、`offscreen`、Service Worker 等）。
 - **后台**：MV3 Service Worker（`background.js`），无持久后台页。
 - **许可证**：MPL 2.0。
