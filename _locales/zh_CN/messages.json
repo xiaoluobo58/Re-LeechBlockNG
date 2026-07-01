@@ -1,6 +1,6 @@
 {
 	"extensionName": { "message": "Re: LeechBlock NG" },
-	"extensionDescription": { "message": "LeechBlock 是一款简单的效率工具，用于拦截浪费时间的网站。" },
+	"extensionDescription": { "message": "Re: LeechBlock NG - LeechBlock 的社区维护分支，用于拦截浪费时间的网站。" },
 
 	"optionsMenuItem": { "message": "选项" },
 	"lockdownMenuItem": { "message": "锁定" },
@@ -353,7 +353,7 @@
 	"optGenImportSync": { "message": "从同步存储导入选项" },
 	"optGenAutoExportSync": { "message": "每次保存选项时自动将选项导出到同步存储（作为备份）" },
 
-	"optAboutIntro": { "message": "<a href=\"https://www.proginosko.com/leechblock/\" target=\"_blank\">LeechBlock NG</a>\n（次世代版）是一款简单的效率工具，旨在<br>\n拦截那些会消磨你工作日的浪费时间的站点。<br>\n你只需指定要拦截哪些站点以及何时拦截即可。" },
+	"optAboutIntro": { "message": "<a href=\"https://www.proginosko.com/leechblock/\" target=\"_blank\">Re: LeechBlock NG</a>\n是 LeechBlock NG（次世代版）的社区维护分支，一款简单的效率工具，旨在<br>\n拦截那些会消磨你工作日的浪费时间的站点。<br>\n你只需指定要拦截哪些站点以及何时拦截即可。" },
 	"optAboutVersion": { "message": "版本：" },
 	"optAboutLicense": { "message": "许可证：" },
 	"optAboutAuthor": { "message": "作者：" },

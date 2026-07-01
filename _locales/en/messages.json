@@ -1,6 +1,6 @@
 {
 	"extensionName": { "message": "Re: LeechBlock NG", "description": "Name of the extension." },
-	"extensionDescription": { "message": "LeechBlock is a simple productivity tool for blocking time-wasting sites.", "description": "Description of the extension." },
+	"extensionDescription": { "message": "Re: LeechBlock NG - A community fork of LeechBlock for blocking time-wasting sites.", "description": "Description of the extension." },
 
 	"optionsMenuItem": { "message": "Options" },
 	"lockdownMenuItem": { "message": "Lockdown" },
@@ -353,7 +353,7 @@
 	"optGenImportSync": { "message": "Import Options from Sync Storage" },
 	"optGenAutoExportSync": { "message": "Automatically export options to sync storage (as backup) whenever options are saved" },
 
-	"optAboutIntro": { "message": "<a href=\"https://www.proginosko.com/leechblock/\" target=\"_blank\">LeechBlock NG</a>\n(Next Generation) is a simple productivity tool designed to<br>\nblock those time-wasting sites that can suck the life out of your working day.<br>\nAll you need to do is specify which sites to block and when to block them." },
+	"optAboutIntro": { "message": "<a href=\"https://www.proginosko.com/leechblock/\" target=\"_blank\">Re: LeechBlock NG</a>\nis a community-maintained fork of LeechBlock NG (Next Generation), a simple productivity tool designed to<br>\nblock those time-wasting sites that can suck the life out of your working day.<br>\nAll you need to do is specify which sites to block and when to block them." },
 	"optAboutVersion": { "message": "Version:" },
 	"optAboutLicense": { "message": "License:" },
 	"optAboutAuthor": { "message": "Author:" },
