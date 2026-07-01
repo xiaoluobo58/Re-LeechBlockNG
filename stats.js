@@ -86,6 +86,9 @@ function refreshPage() {
 
 			if (setName) {
 				getElement(`blockSetName${set}`).innerText = setName;
+			} else {
+				getElement(`blockSetName${set}`).innerText =
+						browser.i18n.getMessage("blockSetDefaultName", [`${set}`]);
 			}
 
 			let fs = getFormattedStats(now, timedata);
@@ -113,6 +116,9 @@ function refreshPage() {
 				getElement(`ldEndTime${set}`).innerText = ldEndTime;
 			}
 		}
+
+		// Localize static form text (form was reset to original HTML above)
+		if (window.localizePage) window.localizePage();
 
 		$("#form").show();
 	}

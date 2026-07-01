@@ -5,9 +5,9 @@
 const browser = chrome;
 
 const LIMIT_PERIOD = {
-	"3600": "this hour",
-	"86400": "today",
-	"604800": "this week"
+	"3600": browser.i18n.getMessage("overridePeriodThisHour"),
+	"86400": browser.i18n.getMessage("overridePeriodToday"),
+	"604800": browser.i18n.getMessage("overridePeriodThisWeek")
 };
 
 function log(message) { console.log("[LBNG] " + message); }
@@ -100,9 +100,9 @@ function initializePage() {
 			if (options[`allowOverride${set}`]) {
 				let setName = options[`setName${set}`];
 				if (setName) {
-					gOverrideSetNames.push(`Block Set ${set} (${setName})`);
+					gOverrideSetNames.push(browser.i18n.getMessage("blockSetNamed", [`${set}`, setName]));
 				} else {
-					gOverrideSetNames.push(`Block Set ${set}`);
+					gOverrideSetNames.push(browser.i18n.getMessage("blockSetDefaultName", [`${set}`]));
 				}
 			}
 		}
@@ -327,7 +327,10 @@ function initAccessControlPrompt(prompt) {
 		autoOpen: false,
 		modal: true,
 		width: 600,
-		buttons: dialogButtons,
+		buttons: [
+			{ text: browser.i18n.getMessage("buttonOK"), click: dialogButtons.OK },
+			{ text: browser.i18n.getMessage("buttonCancel"), click: dialogButtons.Cancel }
+		],
 		close: function (event, ui) { if (!gAccessConfirmed) closePage(); }
 	});
 
@@ -348,9 +351,10 @@ $("div[id^='alert']").dialog({
 	autoOpen: false,
 	modal: true,
 	width: 500,
-	buttons: {
-		OK: function () { $(this).dialog("close"); }
-	}
+	buttons: [{
+		text: browser.i18n.getMessage("buttonOK"),
+		click: function () { $(this).dialog("close"); }
+	}]
 });
 $("#alertLimitReached").dialog({
 	close: function (event, ui) { closePage(); }

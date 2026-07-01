@@ -731,7 +731,7 @@ function checkTab(id, isBeforeNav, isRepeat) {
 						}
 
 						// Get final URL for block page
-						blockURL = getLocalizedURL(blockURL)
+						blockURL = blockURL
 								.replace(/\$K/g, keyword ? keyword : "")
 								.replace(/\$S/g, set)
 								.replace(/\$U/g, pageURLWithHash);
@@ -822,12 +822,10 @@ function checkWarning(id) {
 			gTabs[id].warned = true;
 
 			// Send message to tab
-			let text = `Sites in Block Set ${set}`;
 			let setName = gOptions[`setName${set}`];
-			if (setName) {
-				text += ` (${setName})`;
-			}
-			text += ` will be blocked in ${secsLeft} seconds.`;
+			let text = setName
+					? browser.i18n.getMessage("alertSitesBlockedInNamed", [`${set}`, setName, `${secsLeft}`])
+					: browser.i18n.getMessage("alertSitesBlockedIn", [`${set}`, `${secsLeft}`]);
 			let message = {
 				type: "alert",
 				text: text
@@ -1965,8 +1963,7 @@ browser.runtime.getPlatformInfo().then(
 	function (info) { gIsAndroid = (info.os == "android"); }
 );
 
-let localePath = browser.i18n.getMessage("localePath");
-browser.action.setPopup({ popup: localePath + "popup.html" });
+browser.action.setPopup({ popup: "popup.html" });
 
 if (browser.contextMenus) {
 	browser.contextMenus.onClicked.addListener(handleMenuClick);

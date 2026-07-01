@@ -14,22 +14,22 @@
 		<link id="themeLink" rel="stylesheet">
 	</head>
 
-	<body>
+	<body data-i18n-document-title="diagnosticsPageTitle">
 
 		<div id="form-container">
 
 			<form id="form" style="display: none;" action="javascript: void(0);">
 
 				<fieldset class="ui-widget ui-widget-content">
-					<legend>LeechBlock Diagnostics</legend>
+					<legend data-i18n="diagnosticsLegend">LeechBlock Diagnostics</legend>
 					<p>
-						<label>Enter the fully specified URL to test against your current block sets:</label>
+						<label data-i18n="diagnosticsUrlLabel">Enter the fully specified URL to test against your current block sets:</label>
 						<div>
 							<input id="url" type="text" size="60" placeholder="https://somesite.com" autocomplete="off">
-							<button id="testURL" type="button">Test URL</button>
+							<button id="testURL" type="button" data-i18n="diagnosticsTestURL">Test URL</button>
 						</div>
 					</p>
-					<p>
+					<p data-i18n-html="diagnosticsTip">
 						<strong>Tip:</strong> You can copy/paste from your browser's location bar.
 					</p>
 					<hr>
@@ -43,17 +43,18 @@
 		</div>
 
 		<div id="alerts" style="display: none;">
-			<div id="alertRetrieveError" title="LeechBlock Diagnostics">
-				<p><strong>Error:</strong> Unable to retrieve options from browser storage.</p>
+			<div id="alertRetrieveError" title="LeechBlock Diagnostics" data-i18n-title="diagnosticsPageTitle">
+				<p data-i18n-html="alertRetrieveError"><strong>Error:</strong> Unable to retrieve options from browser storage.</p>
 			</div>
-			<div id="alertBadTestURL" title="LeechBlock Diagnostics">
-				<p>Please enter the URL in the correct format (as a fully specified URL).</p>
+			<div id="alertBadTestURL" title="LeechBlock Diagnostics" data-i18n-title="diagnosticsPageTitle">
+				<p data-i18n="diagnosticsAlertBadURL">Please enter the URL in the correct format (as a fully specified URL).</p>
 			</div>
 		</div>
 
 		<script src="/jquery-ui/external/jquery/jquery.js"></script>
 		<script src="/jquery-ui/jquery-ui.min.js"></script>
 	    <script src="/common.js"></script>
+	    <script src="/i18n.js"></script>
 	    <script src="/diagnostics.js"></script>
 
 	</body>

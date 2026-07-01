@@ -135,9 +135,10 @@ $("div[id^='alert']").dialog({
 	autoOpen: false,
 	modal: true,
 	width: 500,
-	buttons: {
-		OK: function () { $(this).dialog("close"); }
-	}
+	buttons: [{
+		text: browser.i18n.getMessage("buttonOK"),
+		click: function () { $(this).dialog("close"); }
+	}]
 });
 
 document.addEventListener("DOMContentLoaded", initializePage);

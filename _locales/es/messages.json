@@ -14,7 +14,6 @@
 		"message": "/es/",
 		"description": "Ruta a los archivos localizados."
 	},
-
 	"optionsMenuItem": { "message": "Opciones" },
 
 	"lockdownMenuItem": { "message": "Restringir" },

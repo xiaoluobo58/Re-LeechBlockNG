@@ -84,12 +84,17 @@ function refreshPage() {
 				getElement(`blockSet${set}`).checked = lockdown;
 			}
 
-			// Append custom set name to check box label (if specified)
+			// Set localized check box label (with custom set name if specified)
+			let label = browser.i18n.getMessage("lockdownSiteLabel", [`${set}`]);
 			let setName = options[`setName${set}`];
 			if (setName) {
-				getElement(`blockSetLabel${set}`).innerText += ` (${setName})`;
+				label += ` (${setName})`;
 			}
+			getElement(`blockSetLabel${set}`).innerText = label;
 		}
+
+		// Localize static form text (form was reset to original HTML above)
+		if (window.localizePage) window.localizePage();
 
 		$("#form").show();
 	}
@@ -178,9 +183,10 @@ $("div[id^='alert']").dialog({
 	autoOpen: false,
 	modal: true,
 	width: 500,
-	buttons: {
-		OK: function () { $(this).dialog("close"); }
-	}
+	buttons: [{
+		text: browser.i18n.getMessage("buttonOK"),
+		click: function () { $(this).dialog("close"); }
+	}]
 });
 
 window.addEventListener("DOMContentLoaded", refreshPage);

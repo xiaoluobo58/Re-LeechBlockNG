@@ -16,8 +16,6 @@ const OVERRIDE_ICON = { 16: "icons/leechblock16o.png", 32: "icons/leechblock32o.
 
 const PARSE_URL = /^((([\w-]+):\/*(\w+(?::\w+)?@)?([\w-\.]+)(?::(\d*))?)([^\?#]*))(\?[^#]*)?(#.*)?$/;
 
-const ABSOLUTE_URL = /^[\w-]+:/;
-
 const INTERNAL_BLOCK_URL = /^(\w+\/)?(blocked|delayed|password)\.html\?\$S&\$U$/;
 
 const LEECHBLOCK_URL = "https://www.proginosko.com/leechblock/";
@@ -577,14 +575,6 @@ function setTheme(theme) {
 	if (link) {
 		link.href = "/themes/" + (theme ? `${theme}.css` : "default.css");
 	}
-}
-
-// Get localized version of extension page
-//
-function getLocalizedURL(url) {
-	return (ABSOLUTE_URL.test(url))
-			? url // no localization for absolute URL
-			: browser.i18n.getMessage("localePath") + url;
 }
 
 // Get clean version of URL (remove source/reader prefix)

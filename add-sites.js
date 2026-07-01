@@ -54,11 +54,11 @@ function refreshPage() {
 		// Update drop-down list of block sets
 		let blockSetHTML = "";
 		for (let set = 1; set <= numSets; set++) {
-			blockSetHTML += `<option value="${set}">Block Set ${set}`;
+			blockSetHTML += `<option value="${set}">`;
 			let setName = options[`setName${set}`];
-			if (setName) {
-				blockSetHTML += ` (${setName})`;
-			}
+			blockSetHTML += setName
+					? browser.i18n.getMessage("blockSetNamed", [`${set}`, setName])
+					: browser.i18n.getMessage("blockSetDefaultName", [`${set}`]);
 			blockSetHTML += "</option>";
 		}
 		$("#blockSet").html(blockSetHTML);
@@ -113,9 +113,10 @@ $("div[id^='alert']").dialog({
 	autoOpen: false,
 	modal: true,
 	width: 500,
-	buttons: {
-		OK: function () { $(this).dialog("close"); }
-	}
+	buttons: [{
+		text: browser.i18n.getMessage("buttonOK"),
+		click: function () { $(this).dialog("close"); }
+	}]
 });
 
 document.addEventListener("DOMContentLoaded", refreshPage);

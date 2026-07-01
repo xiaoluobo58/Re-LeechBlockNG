@@ -225,7 +225,7 @@ function showSimplifiedOptions(simplify) {
 // Update block set name on tab
 //
 function updateBlockSetName(set, name) {
-	getElement(`blockSetName${set}`).innerText = name ? name : `Block Set ${set}`;
+	getElement(`blockSetName${set}`).innerText = name ? name : browser.i18n.getMessage("blockSetDefaultName", [`${set}`]);
 }
 
 // Update show/hide password page options
@@ -694,6 +694,9 @@ function retrieveOptions() {
 // Confirm access to options
 //
 function confirmAccess(options) {
+	// Localize static form text (form was reset to original HTML during init)
+	if (window.localizePage) window.localizePage();
+
 	if (gAccessConfirmed) {
 		// Access already confirmed
 		$("#form").show({ effect: "fade" });
@@ -1293,7 +1296,10 @@ function initAccessControlPrompt(prompt) {
 		autoOpen: false,
 		modal: true,
 		width: 600,
-		buttons: dialogButtons,
+		buttons: [
+			{ text: browser.i18n.getMessage("buttonOK"), click: dialogButtons.OK },
+			{ text: browser.i18n.getMessage("buttonCancel"), click: dialogButtons.Cancel }
+		],
 		close: function (event, ui) { if (!gAccessConfirmed) closeOptions(); }
 	});
 
@@ -1336,9 +1342,10 @@ $("div[id^='alert']").dialog({
 	autoOpen: false,
 	modal: true,
 	width: 600,
-	buttons: {
-		OK: function () { $(this).dialog("close"); }
-	}
+	buttons: [{
+		text: browser.i18n.getMessage("buttonOK"),
+		click: function () { $(this).dialog("close"); }
+	}]
 });
 
 // Initialize access control prompts
