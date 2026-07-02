@@ -3,3 +3,23 @@
 body {
 	background: #fff;
 }
+
+/* Material 3 inspired theme tokens */
+
+:root {
+	--lb-bg: #f7fbf8;
+	--lb-surface: #ffffff;
+	--lb-surface-container: #eef4f0;
+	--lb-surface-container-high: #e6eee9;
+	--lb-primary: #006b5f;
+	--lb-on-primary: #ffffff;
+	--lb-primary-container: #9ff2e2;
+	--lb-on-primary-container: #00201c;
+	--lb-secondary: #4a635f;
+	--lb-on-surface: #171d1b;
+	--lb-on-surface-variant: #3f4946;
+	--lb-outline: #6f7976;
+	--lb-outline-variant: #bec9c5;
+	--lb-error: #ba1a1a;
+	--lb-shadow: 0 1px 2px rgba(0, 0, 0, 0.18), 0 2px 6px rgba(0, 0, 0, 0.10);
+}

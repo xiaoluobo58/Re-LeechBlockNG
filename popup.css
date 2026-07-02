@@ -48,3 +48,99 @@ button:active:enabled {
 .logo {
 	width: 204px;
 }
+
+/* Material 3 inspired refresh */
+
+:root {
+	--lb-bg: #f7fbf8;
+	--lb-surface: #ffffff;
+	--lb-surface-container: #eef4f0;
+	--lb-primary: #006b5f;
+	--lb-on-primary: #ffffff;
+	--lb-on-surface: #171d1b;
+	--lb-on-surface-variant: #3f4946;
+	--lb-outline-variant: #bec9c5;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root {
+		--lb-bg: #101412;
+		--lb-surface: #191f1c;
+		--lb-surface-container: #202724;
+		--lb-primary: #82d5c7;
+		--lb-on-primary: #003731;
+		--lb-on-surface: #e0e5e2;
+		--lb-on-surface-variant: #bec9c5;
+		--lb-outline-variant: #3f4946;
+	}
+}
+
+body {
+	box-sizing: border-box;
+	min-width: 232px;
+	margin: 0;
+	padding: 12px;
+	background:
+			linear-gradient(180deg, var(--lb-surface-container) 0, var(--lb-bg) 150px)
+			var(--lb-bg) !important;
+	color: var(--lb-on-surface) !important;
+	font: normal 14px "Open Sans", Arial, sans-serif;
+}
+
+body > p {
+	margin: 0 0 10px 0;
+}
+
+#button-container {
+	display: grid;
+	box-sizing: border-box;
+	width: 208px;
+	gap: 6px;
+	padding: 10px;
+	border: 1px solid var(--lb-outline-variant);
+	border-radius: 8px;
+	background: var(--lb-surface);
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.16), 0 2px 6px rgba(0, 0, 0, 0.10);
+}
+
+#button-container br {
+	display: none;
+}
+
+button {
+	display: block;
+	box-sizing: border-box;
+	min-height: 34px;
+	margin: 0;
+	padding: 7px 12px;
+	border: 1px solid var(--lb-outline-variant) !important;
+	border-radius: 8px;
+	background: var(--lb-surface-container) !important;
+	color: var(--lb-on-surface) !important;
+	font: 600 13px "Open Sans", Arial, sans-serif;
+	cursor: pointer;
+}
+
+button:hover:enabled {
+	background: color-mix(in srgb, var(--lb-primary) 12%, var(--lb-surface-container)) !important;
+}
+
+button:focus {
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--lb-primary) 24%, transparent);
+	outline: none;
+}
+
+button:active:enabled {
+	background: color-mix(in srgb, var(--lb-primary) 20%, var(--lb-surface-container)) !important;
+}
+
+#options {
+	border-color: transparent !important;
+	background: var(--lb-primary) !important;
+	color: var(--lb-on-primary) !important;
+}
+
+#options:hover:enabled,
+#options:active:enabled {
+	background: color-mix(in srgb, var(--lb-primary) 88%, #000 12%) !important;
+}

@@ -116,3 +116,32 @@ body {
 }
 
 }
+
+@media (prefers-color-scheme: dark) {
+
+/* Material 3 inspired theme tokens */
+
+:root {
+	--lb-bg: #101412;
+	--lb-surface: #191f1c;
+	--lb-surface-container: #202724;
+	--lb-surface-container-high: #2a312e;
+	--lb-primary: #82d5c7;
+	--lb-on-primary: #003731;
+	--lb-primary-container: #005047;
+	--lb-on-primary-container: #9ff2e2;
+	--lb-secondary: #b0ccc5;
+	--lb-on-surface: #e0e5e2;
+	--lb-on-surface-variant: #bec9c5;
+	--lb-outline: #88938f;
+	--lb-outline-variant: #3f4946;
+	--lb-error: #ffb4ab;
+	--lb-shadow: 0 1px 2px rgba(0, 0, 0, 0.50), 0 3px 8px rgba(0, 0, 0, 0.38);
+}
+
+body {
+	background: var(--lb-bg) !important;
+	color: var(--lb-on-surface) !important;
+}
+
+}
