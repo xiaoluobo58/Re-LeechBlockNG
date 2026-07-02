@@ -15,6 +15,14 @@ const TIMER_LOCATIONS = [
 
 var gTimer;
 var gAlert;
+var gGoalWidget;
+var gGoalState = {
+	currentText: "",
+	startedAt: 0,
+	allowedUntil: 0,
+	planMins: 0
+};
+var gGoalTimerID;
 
 // Notify background script that page has loaded
 //
@@ -65,6 +73,43 @@ function updateTimer(text, size, location) {
 
 		// Show timer
 		gTimer.hidden = false;
+	}
+}
+
+function formatGoalElapsed(startedAt) {
+	if (!startedAt) return "0";
+	let elapsedSecs = Math.max(0, Math.floor(Date.now() / 1000) - startedAt);
+	return Math.floor(elapsedSecs / 60).toString();
+}
+
+function ensureGoalWidget() {
+	if (!gGoalWidget) {
+		gGoalWidget = document.createElement("div");
+		gGoalWidget.setAttribute("class", "leechblock-goal-widget");
+		gGoalWidget.addEventListener("dblclick", function (e) { this.style.display = "none"; });
+	}
+	if (!document.documentElement.contains(gGoalWidget)) {
+		document.documentElement.appendChild(gGoalWidget);
+	}
+}
+
+function updateGoalWidget(goal) {
+	if (goal) {
+		gGoalState = goal;
+	}
+	ensureGoalWidget();
+
+	let title = browser.i18n.getMessage("goalWidgetTitle") || "Current Goal";
+	let empty = browser.i18n.getMessage("goalWidgetEmpty") || "Not set";
+	let elapsed = browser.i18n.getMessage("goalWidgetElapsed", [formatGoalElapsed(gGoalState.startedAt)])
+			|| `Elapsed: ${formatGoalElapsed(gGoalState.startedAt)} minutes`;
+	let goalText = gGoalState.currentText || empty;
+
+	gGoalWidget.innerText = `${title}\n${goalText}\n${elapsed}`;
+	gGoalWidget.hidden = false;
+
+	if (!gGoalTimerID) {
+		gGoalTimerID = window.setInterval(function () { updateGoalWidget(); }, 60000);
 	}
 }
 
@@ -167,6 +212,10 @@ function handleMessage(message, sender, sendResponse) {
 			applyFilter(message.filterName, message.filterCustom);
 			break;
 
+		case "goal-state":
+			updateGoalWidget(message.goal);
+			break;
+
 		case "keyword":
 			let keyword = checkKeyword(new RegExp(message.keywordRE, "iu"), message.titleOnly); // Chrome workaround
 			sendResponse(keyword);
@@ -202,11 +251,22 @@ function onUnload(event) {
 		gAlert.parentNode.removeChild(gAlert);
 		gAlert = null;
 	}
+
+	if (gGoalWidget && gGoalWidget.parentNode) {
+		gGoalWidget.parentNode.removeChild(gGoalWidget);
+		gGoalWidget = null;
+	}
+
+	if (gGoalTimerID) {
+		window.clearInterval(gGoalTimerID);
+		gGoalTimerID = null;
+	}
 }
 
 browser.runtime.onMessage.addListener(handleMessage);
 
 notifyLoaded();
+browser.runtime.sendMessage({ type: "goal-state" }).then(updateGoalWidget).catch(function (error) {});
 
 window.addEventListener("focus", onFocus);
 window.addEventListener("blur", onBlur);

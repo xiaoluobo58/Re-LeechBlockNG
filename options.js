@@ -34,6 +34,14 @@ var gNewOpen = true;
 var gSimplified = false;
 var gClockTimeOpts;
 
+function getGlobalPolicyTabIndex() {
+	return gNumSets;
+}
+
+function getGeneralTabIndex() {
+	return gNumSets + 1;
+}
+
 // Initialize form (with specified number of block sets)
 //
 function initForm(numSets) {
@@ -69,8 +77,8 @@ function initForm(numSets) {
 				.replace(/(id|href)="(#?\w+)1"/g, `$1="$2${set}"`);
 		let nextSetHTML = setHTML
 				.replace(/(id|for)="(\w+)1"/g, `$1="$2${set}"`);
-		$("#tabGeneral").before(`<li id="tabBlockSet${set}">${nextTabHTML}</li>`);
-		$("#paneGeneral").before(`<div id="blockSet${set}">${nextSetHTML}</div>`);
+		$("#tabGlobalPolicy").before(`<li id="tabBlockSet${set}">${nextTabHTML}</li>`);
+		$("#paneGlobalPolicy").before(`<div id="blockSet${set}">${nextSetHTML}</div>`);
 	}
 
 	// Set up JQuery UI widgets
@@ -168,7 +176,7 @@ function initForm(numSets) {
 	// Set active tab
 	if (gTabIndex < 0) {
 		// -ve index = other tab (General, About)
-		let index = Math.max(0, gTabIndex + gNumSets + 2);
+		let index = Math.max(0, gTabIndex + gNumSets + 3);
 		$("#tabs").tabs("option", "active", index);
 	} else {
 		// +ve index = block set tab
@@ -178,7 +186,7 @@ function initForm(numSets) {
 
 	function onActivate(event, ui) {
 		let index = ui.newTab.index();
-		gTabIndex = (index < gNumSets) ? index : (index - gNumSets - 2);
+		gTabIndex = (index < gNumSets) ? index : (index - gNumSets - 3);
 	}
 }
 
@@ -226,6 +234,18 @@ function showSimplifiedOptions(simplify) {
 //
 function updateBlockSetName(set, name) {
 	getElement(`blockSetName${set}`).innerText = name ? name : browser.i18n.getMessage("blockSetDefaultName", [`${set}`]);
+}
+
+// Activate the Global Policy Layer tab
+//
+function activateGlobalPolicyTab() {
+	$("#tabs").tabs("option", "active", getGlobalPolicyTabIndex());
+}
+
+// Activate the General tab
+//
+function activateGeneralTab() {
+	$("#tabs").tabs("option", "active", getGeneralTabIndex());
 }
 
 // Update show/hide password page options
@@ -313,70 +333,70 @@ function saveOptions(event) {
 	// Check format for text fields in general options
 	let numSets = $("#numSets").val();
 	if (!numSets || !checkPosIntFormat(numSets)) {
-		$("#tabs").tabs("option", "active", gNumSets);
+		activateGeneralTab();
 		$("#numSets").focus();
 		$("#alertBadNumSets").dialog("open");
 		return false;
 	}
 	let accessPreventTimes = $("#accessPreventTimes").val();
 	if (!checkTimePeriodsFormat(accessPreventTimes)) {
-		$("#tabs").tabs("option", "active", gNumSets);
+		activateGeneralTab();
 		$("#accessPreventTimes").focus();
 		$("#alertBadTimes").dialog("open");
 		return false;
 	}
 	let overrideMins = $("#overrideMins").val();
 	if (!checkPosIntFormat(overrideMins)) {
-		$("#tabs").tabs("option", "active", gNumSets);
+		activateGeneralTab();
 		$("#overrideMins").focus();
 		$("#alertBadMinutes").dialog("open");
 		return false;
 	}
 	let overrideLimitNum = $("#overrideLimitNum").val();
 	if (!checkPosIntFormat(overrideLimitNum)) {
-		$("#tabs").tabs("option", "active", gNumSets);
+		activateGeneralTab();
 		$("#overrideLimitNum").focus();
 		$("#alertBadOverrideLimitNum").dialog("open");
 		return false;
 	}
 	let timerMaxHours = $("#timerMaxHours").val();
 	if (!checkPosIntFormat(timerMaxHours)) {
-		$("#tabs").tabs("option", "active", gNumSets);
+		activateGeneralTab();
 		$("#timerMaxHours").focus();
 		$("#alertBadHours").dialog("open");
 		return false;
 	}
 	let warnSecs = $("#warnSecs").val();
 	if (!checkPosIntFormat(warnSecs)) {
-		$("#tabs").tabs("option", "active", gNumSets);
+		activateGeneralTab();
 		$("#warnSecs").focus();
 		$("#alertBadSeconds").dialog("open");
 		return false;
 	}
 	let saveSecs = $("#saveSecs").val();
 	if (!saveSecs || !checkPosIntFormat(saveSecs)) {
-		$("#tabs").tabs("option", "active", gNumSets);
+		activateGeneralTab();
 		$("#saveSecs").focus();
 		$("#alertBadSeconds").dialog("open");
 		return false;
 	}
 	let processTabsSecs = $("#processTabsSecs").val();
 	if (!processTabsSecs || !checkPosIntFormat(processTabsSecs)) {
-		$("#tabs").tabs("option", "active", gNumSets);
+		activateGeneralTab();
 		$("#processTabsSecs").focus();
 		$("#alertBadSeconds").dialog("open");
 		return false;
 	}
 	let clockOffset = $("#clockOffset").val();
 	if (!checkPosNegIntFormat(clockOffset)) {
-		$("#tabs").tabs("option", "active", gNumSets);
+		activateGeneralTab();
 		$("#clockOffset").focus();
 		$("#alertBadClockOffset").dialog("open");
 		return false;
 	}
 	let ignoreJumpSecs = $("#ignoreJumpSecs").val();
 	if (!checkPosIntFormat(ignoreJumpSecs)) {
-		$("#tabs").tabs("option", "active", gNumSets);
+		activateGeneralTab();
 		$("#ignoreJumpSecs").focus();
 		$("#alertBadSeconds").dialog("open");
 		return false;
@@ -391,7 +411,7 @@ function saveOptions(event) {
 	accessPreventTimes = cleanTimePeriods(accessPreventTimes);
 	$("#accessPreventTimes").val(accessPreventTimes);
 	if (accessPreventTimes == ALL_DAY_TIMES) {
-		$("#tabs").tabs("option", "active", gNumSets);
+		activateGeneralTab();
 		$("#accessPreventTimes").focus();
 		$("#alertBadAccessPreventTimes").dialog("open");
 		return false;
@@ -407,7 +427,9 @@ function saveOptions(event) {
 			if (type == "boolean") {
 				options[name] = getElement(id).checked;
 			} else if (type == "string") {
-				options[name] = getElement(id).value;
+				options[name] = (name == "globalPolicyGoalWhitelist")
+						? cleanGoalWhitelist(getElement(id).value)
+						: getElement(id).value;
 			}
 		}
 	}
@@ -675,7 +697,9 @@ function retrieveOptions() {
 				if (type == "boolean") {
 					getElement(id).checked = options[name];
 				} else if (type == "string") {
-					getElement(id).value = options[name];
+					getElement(id).value = (name == "globalPolicyGoalWhitelist")
+							? options[name].replace(/\s+/g, "\n")
+							: options[name];
 				}
 			}
 		}
@@ -842,7 +866,10 @@ function compileExportOptions(passwords) {
 			if (type == "boolean") {
 				options[name] = getElement(id).checked;
 			} else if (type == "string") {
-				options[name] = escape(getElement(id).value);
+				let val = (name == "globalPolicyGoalWhitelist")
+						? cleanGoalWhitelist(getElement(id).value)
+						: getElement(id).value;
+				options[name] = escape(val);
 			}
 		}
 	}
@@ -909,7 +936,10 @@ function applyImportOptions(options) {
 			if (type == "boolean") {
 				getElement(id).checked = options[name];
 			} else if (type == "string") {
-				getElement(id).value = unescape(options[name]);
+				let val = unescape(options[name]);
+				getElement(id).value = (name == "globalPolicyGoalWhitelist")
+						? val.replace(/\s+/g, "\n")
+						: val;
 			}
 		}
 	}
@@ -1009,7 +1039,7 @@ function importOptions() {
 		cleanOptions(options);
 		applyImportOptions(options);
 
-		$("#tabs").tabs("option", "active", gNumSets);
+		activateGeneralTab();
 		$("#alertImportSuccess").dialog("open");
 	}
 }
@@ -1063,7 +1093,7 @@ function importOptionsSync(event) {
 		applyImportOptions(options);
 
 		if (event) {
-			$("#tabs").tabs("option", "active", gNumSets);
+			activateGeneralTab();
 			$("#alertImportSuccess").dialog("open");
 		}
 	}

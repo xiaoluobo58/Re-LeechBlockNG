@@ -23,6 +23,7 @@
 				<div id="tabs">
 					<ul>
 						<li id="tabBlockSet1"><a href="#blockSet1"><span id="blockSetName1">Block Set 1</span></a></li>
+						<li id="tabGlobalPolicy"><a href="#paneGlobalPolicy" data-i18n="optTabGlobalPolicy">Global Policy Layer</a></li>
 						<li id="tabGeneral"><a href="#paneGeneral" data-i18n="optTabGeneral">General</a></li>
 						<li id="tabAbout"><a href="#paneAbout" data-i18n="optTabAbout">About</a></li>
 					</ul>
@@ -387,6 +388,39 @@
 							<hr>
 							<p>
 								<button id="cancelLockdown1" type="button" disabled="disabled" data-i18n="optCancelActiveLockdown">Cancel Active Lockdown</button>
+							</p>
+						</fieldset>
+					</div>
+					<div id="paneGlobalPolicy">
+						<fieldset>
+							<legend data-i18n="optGlobalPolicyLegend">Global Policy Layer</legend>
+							<p>
+								<em data-i18n="optGlobalPolicyIntro">Global Policy Layer runs before block sets.</em>
+							</p>
+							<hr>
+							<p>
+								<input id="globalPolicyEnabled" type="checkbox">
+								<label for="globalPolicyEnabled" data-i18n="optGlobalPolicyEnabled">Enable Global Policy Layer (beta)</label>
+							</p>
+						</fieldset>
+						<fieldset>
+							<legend data-i18n="optGoalModeLegend">Goal Mode</legend>
+							<p>
+								<em data-i18n="optGoalModeIntro">Goal Mode allows whitelisted domains and asks for a goal before other web pages are opened.</em>
+							</p>
+							<hr>
+							<p>
+								<label data-i18n="optGoalWhitelistLabel">Enter domains that Goal Mode should always allow (one item per line):</label>
+							</p>
+							<p>
+								<textarea id="globalPolicyGoalWhitelist" cols="60" rows="10" spellcheck="false" placeholder="example.com"></textarea>
+							</p>
+							<p>
+								<label data-i18n="optGoalDomainModeLabel">When a domain is whitelisted:</label>
+								<select id="globalPolicyGoalDomainMode">
+									<option value="exact_www" data-i18n="optGoalDomainModeExactWww">Allow this domain and www only</option>
+									<option value="include_subdomains" data-i18n="optGoalDomainModeSubdomains">Allow all subdomains</option>
+								</select>
 							</p>
 						</fieldset>
 					</div>

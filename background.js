@@ -12,6 +12,7 @@ const EXTENSION_URL = browser.runtime.getURL("");
 const BLOCKED_PAGE_URL = browser.runtime.getURL(BLOCKED_PAGE);
 const DELAYED_PAGE_URL = browser.runtime.getURL(DELAYED_PAGE);
 const PASSWORD_PAGE_URL = browser.runtime.getURL(PASSWORD_PAGE);
+const GOAL_PAGE_URL = browser.runtime.getURL(GOAL_PAGE);
 
 function log(message) { console.log("[LBNG] " + message); }
 function warn(message) { console.warn("[LBNG] " + message); }
@@ -35,6 +36,12 @@ var gAllFocused = false;
 var gUseDocFocus = true;
 var gOverrideIcon = false;
 var gSaveSecsCount = 0;
+var gGoalState = {
+	currentText: "",
+	startedAt: 0,
+	allowedUntil: 0,
+	planMins: 0
+};
 
 // Initialize object to track tab (returns false if already initialized)
 //
@@ -89,6 +96,99 @@ function testURL(url, referrer, blockRE, allowRE, referRE, allowRefers) {
 	return allowRefers
 		? block && !(allow || refer)	// refer as allow-condition
 		: (block || refer) && !allow;	// refer as block-condition
+}
+
+function cleanGoalState(state) {
+	return {
+		currentText: typeof state["goalCurrentText"] == "string" ? state["goalCurrentText"] : "",
+		startedAt: typeof state["goalStartedAt"] == "number" ? state["goalStartedAt"] : 0,
+		allowedUntil: typeof state["goalAllowedUntil"] == "number" ? state["goalAllowedUntil"] : 0,
+		planMins: typeof state["goalPlanMins"] == "number" ? state["goalPlanMins"] : 0
+	};
+}
+
+function goalStateForContent() {
+	return {
+		currentText: gGoalState.currentText,
+		startedAt: gGoalState.startedAt,
+		allowedUntil: gGoalState.allowedUntil,
+		planMins: gGoalState.planMins
+	};
+}
+
+function broadcastGoalState() {
+	let message = {
+		type: "goal-state",
+		goal: goalStateForContent()
+	};
+	browser.tabs.query({}).then(
+		function (tabs) {
+			for (let tab of tabs) {
+				browser.tabs.sendMessage(tab.id, message).catch(function (error) {});
+			}
+		},
+		function (error) { warn("Cannot query tabs for goal state: " + error); }
+	);
+}
+
+function updateGoalState(goalText, planMins) {
+	goalText = typeof goalText == "string" ? goalText.trim() : "";
+	planMins = Math.max(1, Math.min(1440, Math.floor(+planMins)));
+	if (!goalText || !(planMins > 0)) {
+		return Promise.resolve();
+	}
+
+	let now = Math.floor(Date.now() / 1000);
+	gGoalState.currentText = goalText;
+	gGoalState.startedAt = now;
+	gGoalState.planMins = planMins;
+	gGoalState.allowedUntil = now + (planMins * 60);
+
+	let state = {
+		goalCurrentText: gGoalState.currentText,
+		goalStartedAt: gGoalState.startedAt,
+		goalAllowedUntil: gGoalState.allowedUntil,
+		goalPlanMins: gGoalState.planMins
+	};
+	return browser.storage.local.set(state).then(function () {
+		broadcastGoalState();
+	}, function (error) {
+		warn("Cannot save goal state: " + error);
+	});
+}
+
+function isGoalAllowedURL(url, parsedURL, now) {
+	if (!gOptions["globalPolicyEnabled"]) return true;
+	if (!/^https?:/i.test(url)) return true;
+	if (gGoalState.allowedUntil > now) return true;
+
+	return isGoalWhitelistedHost(
+			parsedURL.host,
+			gOptions["globalPolicyGoalWhitelist"],
+			gOptions["globalPolicyGoalDomainMode"]);
+}
+
+function getGoalBlockedURL(pageURLWithHash) {
+	return GOAL_BLOCK_URL.replace(/\$U/g, encodeURIComponent(pageURLWithHash));
+}
+
+function createGoalInfo(url) {
+	let parsedURL = getParsedURL(url);
+	let blockedURL = parsedURL.query ? parsedURL.query.substring(1) : "";
+	if (parsedURL.hash != null) {
+		blockedURL += "#" + parsedURL.hash;
+	}
+	try {
+		blockedURL = decodeURIComponent(blockedURL);
+	} catch (error) {
+		warn("Cannot decode goal URL: " + error);
+	}
+	return {
+		theme: gOptions["theme"],
+		customStyle: gOptions["customStyle"],
+		blockedURL: blockedURL,
+		goal: goalStateForContent()
+	};
 }
 
 // Refresh menus
@@ -188,7 +288,7 @@ function refreshTicker() {
 
 // Retrieve options from storage
 //
-function retrieveOptions(update) {
+function retrieveOptions(update, callback) {
 	//log("retrieveOptions: " + update);
 
 	browser.storage.local.get("sync").then(onGotSync, onError);
@@ -198,7 +298,21 @@ function retrieveOptions(update) {
 				? browser.storage.sync
 				: browser.storage.local;
 
-		gStorage.get().then(onGot, onError);
+		gStorage.get().then(onGotOptions, onError);
+	}
+
+	function onGotOptions(options) {
+		browser.storage.local.get([
+			"goalCurrentText",
+			"goalStartedAt",
+			"goalAllowedUntil",
+			"goalPlanMins"
+		]).then(
+			function (state) {
+				gGoalState = cleanGoalState(state);
+				onGot(options);
+			},
+			onError);
 	}
 
 	function onGot(options) {
@@ -227,10 +341,15 @@ function retrieveOptions(update) {
 		refreshTicker();
 		loadSiteLists();
 		updateIcon();
+		broadcastGoalState();
 
 		// Keep track of saved time data to avoid unnecessary writes
 		for (let set = 1; set <= gNumSets; set++) {
 			gSavedTimeData[set] = gOptions[`timedata${set}`].toString();
+		}
+
+		if (callback) {
+			callback();
 		}
 	}
 
@@ -464,13 +583,12 @@ function checkTab(id, isBeforeNav, isRepeat) {
 	// - about:blank
 	// - non-blockable URLs
 	// - blocking pages
-	// - LeechBlock website (documentation should be available by default)
 	if (url == "about:blank"
 			|| !gTabs[id].blockable
 			|| url.startsWith(BLOCKED_PAGE_URL)
 			|| url.startsWith(DELAYED_PAGE_URL)
 			|| url.startsWith(PASSWORD_PAGE_URL)
-			|| (url.startsWith(LEECHBLOCK_URL) && gOptions["allowLBWebsite"])) {
+			|| url.startsWith(GOAL_PAGE_URL)) {
 		return false; // not blocked
 	}
 
@@ -479,6 +597,23 @@ function checkTab(id, isBeforeNav, isRepeat) {
 
 	// Get current time in seconds
 	let now = Math.floor(Date.now() / 1000) + (gClockOffset * 60);
+
+	// Apply Global Policy Layer before ordinary block sets.
+	if (!isGoalAllowedURL(url, parsedURL, Math.floor(Date.now() / 1000))) {
+		let pageURLWithHash = parsedURL.page;
+		if (parsedURL.hash != null) {
+			pageURLWithHash += "#" + parsedURL.hash;
+		}
+		gTabs[id].url = getGoalBlockedURL(pageURLWithHash);
+		browser.tabs.update(id, { url: gTabs[id].url });
+		return true;
+	}
+
+	// LeechBlock website documentation should be available by default once
+	// Global Policy Layer has allowed the request.
+	if (url.startsWith(LEECHBLOCK_URL) && gOptions["allowLBWebsite"]) {
+		return false; // not blocked
+	}
 
 	// Check for allowed host/path (or end of allowed time)
 	let allowHost = !gTabs[id].allowedHost || isSameHost(gTabs[id].allowedHost, parsedURL.host);
@@ -1726,6 +1861,22 @@ function handleMessage(message, sender, sendResponse) {
 			sendResponse(info);
 			break;
 
+		case "goal-info":
+			sendResponse(createGoalInfo(sender.url));
+			break;
+
+		case "goal-state":
+			sendResponse(goalStateForContent());
+			break;
+
+		case "goal-submit":
+			updateGoalState(message.goalText, message.planMins).then(function () {
+				if (message.blockedURL) {
+					browser.tabs.update(sender.tab.id, { url: message.blockedURL });
+				}
+			});
+			break;
+
 		case "close":
 			// Close tab requested
 			browser.tabs.remove(sender.tab.id);
@@ -1768,7 +1919,7 @@ function handleMessage(message, sender, sendResponse) {
 
 		case "options":
 			// Options updated
-			retrieveOptions(true);
+			retrieveOptions(true, function () { processTabs(false); });
 			reorderTimeData(message.ordering);
 			break;
 

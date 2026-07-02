@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+<html id="lbGoalPage" lang="en">
+
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=0.75, shrink-to-fit=no">
+		<title>Goal Required</title>
+		<link rel="shortcut icon" href="/icons/leechblock32.ico" type="image/x-icon">
+		<link rel="icon" href="/icons/leechblock32.ico" type="image/x-icon">
+		<link rel="stylesheet" href="/fonts.css" type="text/css">
+		<link rel="stylesheet" href="/style.css" type="text/css">
+		<link id="themeLink" rel="stylesheet">
+		<style id="customStyle"></style>
+	</head>
+
+	<body data-i18n-document-title="goalPageTitle">
+
+		<div id="lbLogoDiv">
+			<a href="https://www.proginosko.com/leechblock/"><img id="lbLogoImg" src="/images/leechblock_logo.svg" class="logo" alt="LeechBlock logo" title="LeechBlock"></a>
+		</div>
+
+		<div id="lbWarningMsgDiv">
+			<h1 data-i18n="goalRequiredHeading">Set a goal before opening this page.</h1>
+		</div>
+
+		<div id="lbBlockedDiv">
+			<a id="lbGoalURLLink" target="_self"><span id="lbGoalURL"></span></a>
+		</div>
+
+		<form id="lbGoalForm" action="javascript: void(0);">
+			<p>
+				<label for="lbGoalInput" data-i18n="goalInputLabel">Current Goal:</label>
+			</p>
+			<p>
+				<input id="lbGoalInput" type="text" size="60" required>
+			</p>
+			<p>
+				<label for="lbGoalPlanMins" data-i18n="goalPlanMinsLabel">Planned use time (minutes):</label>
+			</p>
+			<p>
+				<input id="lbGoalPlanMins" type="number" min="1" max="1440" step="1" size="6" required>
+			</p>
+			<p>
+				<button id="lbGoalSubmit" type="submit" data-i18n="goalStartButton">Start Goal</button>
+			</p>
+		</form>
+
+		<div id="lbCustomMsgDiv" style="display: none;">
+			<p id="lbGoalError" class="error"></p>
+		</div>
+
+		<script src="/i18n.js"></script>
+		<script src="/goal.js"></script>
+
+	</body>
+
+</html>

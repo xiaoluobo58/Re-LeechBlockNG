@@ -8,11 +8,15 @@ const ALL_DAY_TIMES = "0000-2400";
 const BLOCKED_PAGE = "blocked.html";
 const DELAYED_PAGE = "delayed.html";
 const PASSWORD_PAGE = "password.html";
+const GOAL_PAGE = "goal.html";
 const DEFAULT_BLOCK_URL = "blocked.html?$S&$U";
 const DELAYED_BLOCK_URL = "delayed.html?$S&$U";
 const PASSWORD_BLOCK_URL = "password.html?$S&$U";
+const GOAL_BLOCK_URL = "goal.html?$U";
 const DEFAULT_ICON = { 16: "icons/leechblock16.png", 32: "icons/leechblock32.png" };
 const OVERRIDE_ICON = { 16: "icons/leechblock16o.png", 32: "icons/leechblock32o.png" };
+const GOAL_DOMAIN_MODE_EXACT_WWW = "exact_www";
+const GOAL_DOMAIN_MODE_INCLUDE_SUBDOMAINS = "include_subdomains";
 
 const PARSE_URL = /^((([\w-]+):\/*(\w+(?::\w+)?@)?([\w-\.]+)(?::(\d*))?)([^\?#]*))(\?[^#]*)?(#.*)?$/;
 
@@ -86,6 +90,9 @@ const GENERAL_OPTIONS = {
 	// def: default value, id: form element identifier (see options.html)
 	simplified: { type: "boolean", def: true, id: null }, // default: show simplified options
 	numSets: { type: "string", def: "6", id: "numSets" }, // default: 6 block sets
+	globalPolicyEnabled: { type: "boolean", def: false, id: "globalPolicyEnabled" }, // default: disabled
+	globalPolicyGoalWhitelist: { type: "string", def: "", id: "globalPolicyGoalWhitelist" }, // default: blank
+	globalPolicyGoalDomainMode: { type: "string", def: GOAL_DOMAIN_MODE_EXACT_WWW, id: "globalPolicyGoalDomainMode" },
 	sync: { type: "boolean", def: false, id: "syncStorage" }, // default: use local storage
 	theme: { type: "string", def: "", id: "theme" }, // default: light theme
 	customStyle: { type: "string", def: "", id: "customStyle" }, // default: no custom style
@@ -150,6 +157,10 @@ function cleanOptions(options) {
 		if (typeof options[`${name}`] != type) {
 			options[`${name}`] = def;
 		}
+	}
+	options["globalPolicyGoalWhitelist"] = cleanGoalWhitelist(options["globalPolicyGoalWhitelist"]);
+	if (options["globalPolicyGoalDomainMode"] != GOAL_DOMAIN_MODE_INCLUDE_SUBDOMAINS) {
+		options["globalPolicyGoalDomainMode"] = GOAL_DOMAIN_MODE_EXACT_WWW;
 	}
 
 	// Clean number of block sets
@@ -265,6 +276,51 @@ function cleanSites(sites) {
 	sites = sites.sort().join(" ");
 
 	return sites;
+}
+
+// Normalize one domain from the Goal Mode whitelist
+//
+function normalizeGoalDomain(domain) {
+	domain = domain.toLowerCase();
+	domain = domain.replace(/^[a-z-]+:\/+/, "");
+	domain = domain.replace(/^[^@\/]+@/, "");
+	domain = domain.replace(/[\/\?#].*$/, "");
+	domain = domain.replace(/:\d+$/, "");
+	domain = domain.replace(/^\.+|\.+$/g, "");
+	domain = domain.replace(/^www\./, "");
+	return domain;
+}
+
+// Clean simple domain list for Goal Mode whitelist
+//
+function cleanGoalWhitelist(domains) {
+	domains = domains.replace(/(^\s+)|(\s+$)/g, "");
+	if (!domains) return "";
+
+	let cleanDomains = [];
+	for (let domain of domains.split(/\s+/)) {
+		domain = normalizeGoalDomain(domain);
+		if (domain && cleanDomains.indexOf(domain) < 0) {
+			cleanDomains.push(domain);
+		}
+	}
+	return cleanDomains.sort().join(" ");
+}
+
+// Test whether a host is allowed by the Goal Mode whitelist
+//
+function isGoalWhitelistedHost(host, whitelist, domainMode) {
+	if (!host || !whitelist) return false;
+
+	host = normalizeGoalDomain(host);
+	let domains = whitelist.split(/\s+/);
+	for (let domain of domains) {
+		if (host == domain) return true;
+		if (domainMode == GOAL_DOMAIN_MODE_INCLUDE_SUBDOMAINS && host.endsWith("." + domain)) {
+			return true;
+		}
+	}
+	return false;
 }
 
 // Create regular expressions for matching sites to block/allow
